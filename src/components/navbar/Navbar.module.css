@@ -1,0 +1,111 @@
+*{
+    box-sizing: border-box;
+}
+
+.navbar_container{
+    background-color: white;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+.navbar {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    text-transform: uppercase;
+    min-height: 80px;
+    width: 1280px;
+    max-width: 1440px;
+    margin: auto;
+}
+
+.navbar_links {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    min-height: 80px;
+}
+
+.navbar .navbar_links a{
+    color: black;
+    font-size: 16px;
+    margin-left: 32px;
+    position: relative;
+    text-decoration: none;
+}
+
+.navbar .navbar_links a:hover{
+    color: green;
+}
+
+.navbar .navbar_links a:after{
+    bottom: 0;
+    content: '';
+    left: 50%;
+    position: absolute;
+    transition: all .3s;
+    width: 0;
+}
+
+.navbar .navbar_links a:hover:after{
+    background-color: green;
+    height: 1px;
+    left: -16px;
+    position: absolute;
+    top: 30px;
+    width: calc(100% + 32px);
+}
+
+.navbar .navbar_links a.navbar_link_active{
+    color: green;
+}
+
+.navbar .navbar_links a.navbar_link_active:after{
+    background-color: green;
+    height: 1px;
+    left: -16px;
+    position: absolute;
+    top: 30px;
+    width: calc(100% + 32px);
+}
+
+.currency_cart {
+    display: flex;
+}
+
+.navbar_cart_icon{
+    display: inline-block;
+    height: 20px;
+    margin-left: 22px;
+    width: 20px;
+    cursor: pointer;
+}
+.navbar_CurrencySign{
+    color: #1D1F22;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 160%;
+    margin: 0 10px;
+}
+.cart_box_navbar{
+    margin: auto;
+}
+
+@media only screen and (max-width: 1200px) {
+    .navbar .icon {
+        display: none;
+    }
+
+    .navbar{
+        justify-content: start;
+    }
+
+    .navbar .navbar_links > a{
+        margin-left: 22px;
+    }
+    .currency_cart{
+        margin: 0 16px;
+    }
+}
