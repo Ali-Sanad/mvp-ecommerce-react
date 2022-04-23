@@ -37,11 +37,13 @@ export const RemoveItemFromCart = (item) => {
   };
 };
 
-export const ResizeItemFromCart = (item, newSize) => {
+export const ResizeItemFromCart = (item, newSize, attributeName, oldKey) => {
   return {
     type: RESIZE,
     item: item,
     newSize: newSize,
+    attributeName: attributeName,
+    oldKey: oldKey,
   };
 };
 

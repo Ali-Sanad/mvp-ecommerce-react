@@ -79,7 +79,9 @@
 .bag_counter_buttons {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  gap: 90px;
   text-align: center;
   margin-right: 10px;
   font-size: 20px;
@@ -183,6 +185,51 @@
 .bag_image_right_arrow:hover {
   cursor: pointer;
 }
+
+.total_box {
+  color: #1d1f22;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 18px;
+  margin-top: 8px;
+}
+.total_title {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 18px;
+  text-transform: capitalize;
+}
+.total_amount {
+  font-family: 'Raleway';
+  font-weight: bolder;
+  font-size: 16px;
+  line-height: 160%;
+}
+.checkout_view_bag_button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.checkout_view_bag_button button {
+  box-sizing: border-box;
+  height: 43px;
+  position: static;
+  width: 280px;
+  background-color: #5ece7b;
+  border: 1px solid #5ece7b;
+  color: white;
+  cursor: pointer;
+}
+.totalProductsPriceAndQuantity {
+  margin-bottom: 80px;
+  padding: 10px;
+}
+
 @media only screen and (max-width: 640px) {
   .bag_list_item {
     flex-direction: column;

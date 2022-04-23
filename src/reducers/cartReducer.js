@@ -65,30 +65,41 @@ const cartReducer = (state = initialState, action) => {
       }
       return {...state};
     }
-    case RESIZE:
+    case RESIZE: {
+      /*  
+       item,
+      newSize,
+      attributeName,
+      oldKey
+     */
       const reSizeItemKey =
-        action.item.id + '-' + action.item.selectedSize?.value;
+        action.item.id + '-' + action.item.selectedAttributes?.value;
       const newItemKey = action.item.id + '-' + action.newSize.value;
+
       let newItem = action.item;
-      newItem.selectedSize = action.newSize;
+      newItem.selectedAttributes = {
+        ...action.item.selectedAttributes,
+        [action.attributeName]: action.newSize.value,
+      };
 
-      const updatedItems = Object.keys(state.items).reduce(
-        (newState, oldProductInCartKey) => {
-          if (newItemKey === oldProductInCartKey) {
-            newItem.counter += state.items[oldProductInCartKey].counter;
-            newState[newItemKey] = newItem;
-          } else if (reSizeItemKey === oldProductInCartKey) {
-            newState[newItemKey] = newItem;
-          } else {
-            newState[oldProductInCartKey] = state.items[oldProductInCartKey];
-          }
-          return newState;
-        },
-        {}
-      );
+      // const updatedItems = Object.keys(state.items).reduce(
+      //   (newState, oldProductInCartKey) => {
+      //     if (newItemKey === oldProductInCartKey) {
+      //       newItem.counter += state.items[oldProductInCartKey].counter;
+      //       newState[newItemKey] = newItem;
+      //     } else if (reSizeItemKey === oldProductInCartKey) {
+      //       newState[newItemKey] = newItem;
+      //     } else {
+      //       newState[oldProductInCartKey] = state.items[oldProductInCartKey];
+      //     }
+      //     return newState;
+      //   },
+      //   {}
+      // );
 
-      state.items = updatedItems;
+      // state.items = updatedItems;
       return {...state};
+    }
     default:
       return {...state};
   }

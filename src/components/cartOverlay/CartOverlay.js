@@ -10,26 +10,6 @@ import {
 } from '../../actions';
 import styles from './CartOverlay.module.css';
 
-const mapStateToProps = (state) => {
-  return {
-    currency: state.currency,
-    cart: state.cart,
-    toggleCartReducer: state.toggleCartReducer,
-    currencySwitcherState: state.currencySwitcherReducer,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addItemToCart: (item) => dispatch(AddItemToCart(item)),
-    removeItemFromCart: (item) => dispatch(RemoveItemFromCart(item)),
-    resizeItemFromCart: (item, newSize) =>
-      dispatch(ResizeItemFromCart(item, newSize)),
-    cartSwitcherAction: () => dispatch(CartSwitcherAction()),
-    currencySwitcherAction: () => dispatch(CurrencySwitcherAction()),
-  };
-};
-
 class CartOverlay extends Component {
   constructor(props) {
     super(props);
@@ -42,7 +22,7 @@ class CartOverlay extends Component {
     this.addItem = this.addItem.bind(this);
     this.removeItem = this.removeItem.bind(this);
     this.getTotal = this.getTotal.bind(this);
-    this.selectedSize = this.selectedSize.bind(this);
+    this.selectedSizeHandler = this.selectedSizeHandler.bind(this);
     this.setMouseOver = this.setMouseOver.bind(this);
     this.hideActiveContextMenu = this.hideActiveContextMenu.bind(this);
     this.renderProductCartPrice = this.renderProductCartPrice.bind(this);
@@ -78,7 +58,7 @@ class CartOverlay extends Component {
     return total.toFixed(2);
   }
 
-  selectedSize(product, newSize) {
+  selectedSizeHandler(product, newSize) {
     this.props.resizeItemFromCart(product, newSize);
     this.forceUpdate();
   }
@@ -140,14 +120,15 @@ class CartOverlay extends Component {
                 <p className={styles.size_title}>{attribute?.name}:</p>
                 {attribute?.items.map((size) => (
                   <button
-                    // onClick={() => this.selectedSize(product, size)}
+                    onClick={() => this.selectedSizeHandler(product, size)}
                     key={size.id}
                     className={`${styles.size_button}  ${
-                      product?.selectedAttributes[size?.name] === size?.value
+                      product?.selectedAttributes[attribute?.name] ===
+                      size?.value
                         ? styles.active_button_size
                         : ''
                     } ${
-                      product.selectedAttributes[size?.name] === 'Capacity'
+                      product.selectedAttributes[attribute?.name] === 'Capacity'
                         ? styles.capacity_size_button
                         : ' '
                     }
@@ -172,14 +153,16 @@ class CartOverlay extends Component {
             {colorAttribute[0]?.items.map((size) => (
               <div
                 className={`${styles.color_button_Wrapper} ${
-                  product?.selectedAttributes[size?.name] === size?.value
+                  product?.selectedAttributes[colorAttribute[0]?.name] ===
+                  size?.value
                     ? styles.active_color
                     : ''
                 }`}
                 style={{cursor: 'pointer'}}
+                key={size.id}
               >
                 <button
-                  // onClick={() => this.selectedSize(product, size)}
+                  onClick={() => this.selectedSizeHandler(product, size)}
                   key={size.id}
                   style={{backgroundColor: size.value, cursor: 'pointer'}}
                   className={`${styles.color_button} 
@@ -287,7 +270,7 @@ class CartOverlay extends Component {
               className={`${styles.cart_list_item} ${
                 product?.attributes?.length > 2 ? styles.cart_list_3item : ' '
               }`}
-              // key={product.id + product.selectedSize?.value}
+              // key={product.id + product.selectedSizeHandler?.value}
             >
               {this.renderProductBox(product)}
             </li>
@@ -338,5 +321,25 @@ class CartOverlay extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    currency: state.currency,
+    cart: state.cart,
+    toggleCartReducer: state.toggleCartReducer,
+    currencySwitcherState: state.currencySwitcherReducer,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addItemToCart: (item) => dispatch(AddItemToCart(item)),
+    removeItemFromCart: (item) => dispatch(RemoveItemFromCart(item)),
+    resizeItemFromCart: (item, newSize) =>
+      dispatch(ResizeItemFromCart(item, newSize)),
+    cartSwitcherAction: () => dispatch(CartSwitcherAction()),
+    currencySwitcherAction: () => dispatch(CurrencySwitcherAction()),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartOverlay);

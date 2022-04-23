@@ -54,14 +54,11 @@ class ProductDescription extends Component {
   }
 
   selectedAttributesHandler(attributeName, value) {
-    let clonedSelectedAttributes = JSON.parse(
-      JSON.stringify(this.state.selectedAttributes)
-    );
+    let clonedSelectedAttributes = {...this.state.selectedAttributes};
     clonedSelectedAttributes[attributeName] = value;
-    this.setState((prev) => ({
-      ...prev,
+    this.setState({
       selectedAttributes: clonedSelectedAttributes,
-    }));
+    });
   }
 
   renderMainImage(image) {
@@ -111,12 +108,16 @@ class ProductDescription extends Component {
                 <p className={styles.size_title}>{attribute?.name}:</p>
                 {attribute?.items.map((size) => (
                   <button
-                    onClick={() =>
-                      this.selectedAttributesHandler(attribute.name, size.value)
-                    }
+                    onClick={() => {
+                      this.selectedAttributesHandler(
+                        attribute.name,
+                        size.value
+                      );
+                    }}
                     key={size.id}
                     className={`${styles.size_button}  ${
-                      this.state.selectedAttributes[size?.name] === size?.value
+                      this.state.selectedAttributes[attribute.name] ===
+                      size?.value
                         ? styles.active_button_size
                         : ''
                     }`}
@@ -136,11 +137,13 @@ class ProductDescription extends Component {
             {colorAttribute[0]?.items.map((size) => (
               <div
                 className={`${styles.color_button_Wrapper} ${
-                  this.state?.selectedAttributes[size?.name] === size?.value
+                  this.state?.selectedAttributes[colorAttribute[0]?.name] ===
+                  size?.value
                     ? styles.active_color
                     : ''
                 }`}
                 style={{cursor: 'pointer'}}
+                key={size.id}
               >
                 <button
                   onClick={() =>

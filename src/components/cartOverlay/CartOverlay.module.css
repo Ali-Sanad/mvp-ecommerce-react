@@ -68,7 +68,9 @@
 .counter {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
   text-align: center;
 }
 
@@ -134,10 +136,10 @@
 }
 .total_title {
   font-style: normal;
-  font-weight: 700;
+  font-weight: bold;
   font-size: 16px;
   line-height: 18px;
-  text-transform: normal;
+  text-transform: capitalize;
 }
 .size_title {
   text-transform: capitalize;

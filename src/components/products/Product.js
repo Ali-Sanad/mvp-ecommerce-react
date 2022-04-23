@@ -46,10 +46,8 @@ class Product extends Component {
     if (!this.props.product) {
       return '';
     }
-    let temp = Object.assign({}, this.props.product);
 
-    temp.selectedSize = temp.attributes[0]?.items[0];
-    this.props.addItemToCart(temp);
+    this.props.addItemToCart(this.props.product);
   }
 
   renderProductInfo() {
