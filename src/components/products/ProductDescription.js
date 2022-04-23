@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import parser from 'html-react-parser';
 import {withParams} from '../../utils/hoc';
 import {AddItemToCart, getProductDercsiptionAction} from '../../actions';
+import Spinner from '../spinner/Spinner';
 import styles from './Product.module.css';
 
 const mapStateToProps = (state) => {
@@ -25,32 +26,42 @@ class ProductDescription extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedSize: null,
+      selectedAttributes: {},
       selectedImage: null,
+      isLoading: false,
     };
     this.renderMainImage = this.renderMainImage.bind(this);
     this.renderPrice = this.renderPrice.bind(this);
-    this.renderSizeList = this.renderSizeList.bind(this);
+    this.renderAttributesList = this.renderAttributesList.bind(this);
     this.addItem = this.addItem.bind(this);
-    this.selectedSizeHandler = this.selectedSizeHandler.bind(this);
+    this.selectedAttributesHandler = this.selectedAttributesHandler.bind(this);
     this.renderProductDescription = this.renderProductDescription.bind(this);
     this.renderProductInfo = this.renderProductInfo.bind(this);
   }
 
   async componentDidMount() {
-    const productId = this.props?.params?.id;
-    await this.props.getProductDercsiptionAction(productId);
-
-    this.setState({
-      selectedImage: this.props.productDescription?.gallery[0],
-      selectedSize: this.props.productDescription?.attributes[0]?.items[0],
-    });
+    try {
+      const productId = this.props?.params?.id;
+      this.setState({isLoading: true});
+      await this.props.getProductDercsiptionAction(productId);
+      this.setState({
+        selectedImage: this.props.productDescription?.gallery[0],
+        isLoading: false,
+      });
+    } catch (error) {
+      this.setState({isLoading: true});
+    }
   }
 
-  selectedSizeHandler(size) {
-    this.setState({
-      selectedSize: size,
-    });
+  selectedAttributesHandler(attributeName, value) {
+    let clonedSelectedAttributes = JSON.parse(
+      JSON.stringify(this.state.selectedAttributes)
+    );
+    clonedSelectedAttributes[attributeName] = value;
+    this.setState((prev) => ({
+      ...prev,
+      selectedAttributes: clonedSelectedAttributes,
+    }));
   }
 
   renderMainImage(image) {
@@ -79,45 +90,75 @@ class ProductDescription extends Component {
     );
   }
 
-  renderSizeList() {
+  renderAttributesList() {
     if (!this.props.productDescription?.attributes?.length) {
       return '';
     }
+    const colorAttribute = this.props.productDescription?.attributes?.filter(
+      (attribute) => attribute.name === 'Color'
+    );
+    const allAttributesWithoutColor =
+      this.props.productDescription?.attributes?.filter(
+        (attribute) => attribute.name !== 'Color'
+      );
 
     return (
-      <div className={styles.size_section}>
-        <p className={styles.size_title}>
-          {this.props.productDescription?.attributes[0]?.name}:
-        </p>
-        {this.props.productDescription?.attributes[0]?.items[0].value.includes(
-          '#'
-        )
-          ? this.props.productDescription?.attributes[0]?.items.map((size) => (
-              <button
-                onClick={() => this.selectedSizeHandler(size)}
-                key={size.id}
-                style={{backgroundColor: size.value}}
-                className={`${styles.color_button}  ${
-                  this.state?.selectedSize?.id === size?.id
-                    ? styles.active_color_size
-                    : ''
-                }`}
-              />
-            ))
-          : this.props.productDescription?.attributes[0]?.items.map((size) => (
-              <button
-                onClick={() => this.selectedSizeHandler(size)}
-                key={size.id}
-                className={`${styles.size_button}  ${
-                  this.state?.selectedSize?.id === size?.id
-                    ? styles.active_button_size
-                    : ''
-                }`}
-              >
-                {size.value}
-              </button>
+      <>
+        {!!allAttributesWithoutColor.length && (
+          <>
+            {allAttributesWithoutColor.map((attribute) => (
+              <div className={styles.size_section} key={attribute.name}>
+                <p className={styles.size_title}>{attribute?.name}:</p>
+                {attribute?.items.map((size) => (
+                  <button
+                    onClick={() =>
+                      this.selectedAttributesHandler(attribute.name, size.value)
+                    }
+                    key={size.id}
+                    className={`${styles.size_button}  ${
+                      this.state.selectedAttributes[size?.name] === size?.value
+                        ? styles.active_button_size
+                        : ''
+                    }`}
+                    style={{cursor: 'pointer'}}
+                  >
+                    {size.value}
+                  </button>
+                ))}
+              </div>
             ))}
-      </div>
+          </>
+        )}
+
+        {!!colorAttribute.length && (
+          <div className={styles.size_section} key={colorAttribute[0]?.name}>
+            <p className={styles.size_title}>{colorAttribute[0]?.name}:</p>
+            {colorAttribute[0]?.items.map((size) => (
+              <div
+                className={`${styles.color_button_Wrapper} ${
+                  this.state?.selectedAttributes[size?.name] === size?.value
+                    ? styles.active_color
+                    : ''
+                }`}
+                style={{cursor: 'pointer'}}
+              >
+                <button
+                  onClick={() =>
+                    this.selectedAttributesHandler(
+                      colorAttribute[0].name,
+                      size.value
+                    )
+                  }
+                  key={size.id}
+                  style={{backgroundColor: size.value, cursor: 'pointer'}}
+                  className={`${styles.color_button} 
+                `}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </>
     );
   }
 
@@ -126,9 +167,7 @@ class ProductDescription extends Component {
       return '';
     }
     let temp = Object.assign({}, this.props.productDescription);
-    temp.selectedSize =
-      this.state.selectedSize ??
-      this.props.productDescription?.attributes[0]?.items[0];
+    temp.selectedAttributes = this.state.selectedAttributes;
     this.props.addItemToCart(temp);
   }
 
@@ -141,7 +180,7 @@ class ProductDescription extends Component {
         <p className={styles.product_name}>
           {this.props.productDescription?.name}
         </p>
-        {this.renderSizeList()}
+        {this.renderAttributesList()}
         <div className={styles.price_section}>
           <p className={styles.price_title}>PRICE:</p>
           {this.renderPrice()}
@@ -179,6 +218,7 @@ class ProductDescription extends Component {
                 className={styles.img_slider}
                 src={image}
                 alt='Product Thumbnail'
+                style={{cursor: 'pointer'}}
               />
             ))}
           </div>
@@ -191,6 +231,7 @@ class ProductDescription extends Component {
                   className={styles.main_img}
                   src={this.state.selectedImage}
                   alt='Active product'
+                  style={{cursor: 'pointer'}}
                 />
               </div>
             ) : (
@@ -199,6 +240,7 @@ class ProductDescription extends Component {
                 className={styles.main_img}
                 src={this.state.selectedImage}
                 alt='Active product'
+                style={{cursor: 'pointer'}}
               />
             )}
           </div>
@@ -220,7 +262,7 @@ class ProductDescription extends Component {
   }
 
   render() {
-    return this.renderProductDescription();
+    return this.state.isLoading ? <Spinner /> : this.renderProductDescription();
   }
 }
 

@@ -119,35 +119,62 @@ class Cart extends Component {
   }
 
   renderProductSizesSwitcher(product, key) {
+    const colorAttribute = product?.attributes?.filter(
+      (attribute) => attribute.name === 'Color'
+    );
+    const allAttributesWithoutColor = product?.attributes?.filter(
+      (attribute) => attribute.name !== 'Color'
+    );
     return (
-      <div className={styles.size_section}>
-        {product.attributes[0]?.items[0].value.includes('#')
-          ? product.attributes[0]?.items.map((size) => (
-              <button
-                onClick={() => this.selectedSizeHandler(product, size, key)}
-                key={size.id}
-                style={{backgroundColor: size.value}}
-                className={`${styles.color_button}  ${
-                  product.selectedSize.value === size.value
-                    ? styles.active_color_size
-                    : ''
-                }`}
-              />
-            ))
-          : product.attributes[0]?.items.map((size) => (
-              <button
-                onClick={() => this.selectedSizeHandler(product, size, key)}
-                key={size.id}
-                className={`${styles.size_button}  ${
-                  product.selectedSize.value === size.value
-                    ? styles.active_button_size
-                    : ''
-                }`}
-              >
-                {size.value}
-              </button>
+      <>
+        {!!allAttributesWithoutColor.length && (
+          <>
+            {allAttributesWithoutColor.map((attribute) => (
+              <div className={styles.size_section} key={attribute.name}>
+                <p className={styles.size_title}>{attribute?.name}:</p>
+                {attribute?.items.map((size) => (
+                  <button
+                    // onClick={() => this.selectedSizeHandler(product, size, key)}
+                    key={size.id}
+                    className={`${styles.size_button}  ${
+                      product?.selectedAttributes[size?.name] === size?.value
+                        ? styles.active_button_size
+                        : ''
+                    }`}
+                    style={{cursor: 'pointer'}}
+                  >
+                    {size.value}
+                  </button>
+                ))}
+              </div>
             ))}
-      </div>
+          </>
+        )}
+
+        {!!colorAttribute.length && (
+          <div className={styles.size_section} key={colorAttribute[0]?.name}>
+            <p className={styles.size_title}>{colorAttribute[0]?.name}:</p>
+            {colorAttribute[0]?.items.map((size) => (
+              <div
+                className={`${styles.color_button_Wrapper} ${
+                  product?.selectedAttributes[size?.name] === size?.value
+                    ? styles.active_color
+                    : ''
+                }`}
+                style={{cursor: 'pointer'}}
+              >
+                <button
+                  // onClick={() => this.selectedSizeHandler(product, size, key)}
+                  key={size.id}
+                  style={{backgroundColor: size.value, cursor: 'pointer'}}
+                  className={`${styles.color_button} 
+                `}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </>
     );
   }
 
@@ -158,11 +185,11 @@ class Cart extends Component {
           onClick={() => {
             this.prevProductImage(key);
           }}
-          style={
-            this.state.cardPageImageIndexes[key]?.currentIndex === 0
-              ? {display: 'none'}
-              : {}
-          }
+          // style={
+          //   this.state.cardPageImageIndexes[key]?.currentIndex === 0
+          //     ? {display: 'none'}
+          //     : {}
+          // }
           className={styles.bag_image_left_arrow}
           src={'/img/left_arrow.png'}
           alt=''
@@ -171,12 +198,12 @@ class Cart extends Component {
           onClick={() => {
             this.nextProductImage(key);
           }}
-          style={
-            this.state.cardPageImageIndexes[key]?.currentIndex ===
-            this.state.cardPageImageIndexes[key]?.imageCount - 1
-              ? {display: 'none'}
-              : {}
-          }
+          // style={
+          //   this.state.cardPageImageIndexes[key]?.currentIndex ===
+          //   this.state.cardPageImageIndexes[key]?.imageCount - 1
+          //     ? {display: 'none'}
+          //     : {}
+          // }
           className={styles.bag_image_right_arrow}
           src={'/img/right_arrow.png'}
           alt=''

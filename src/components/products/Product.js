@@ -70,7 +70,11 @@ class Product extends Component {
     return (
       <div id='product' className={styles.product_card}>
         <img
-          onClick={this.props.product.inStock ? this.addItem : () => {}}
+          onClick={
+            this.props.product.inStock &&
+            !this.props.product.attributes.length &&
+            this.addItem
+          }
           style={{
             opacity: this.props.product.inStock ? '1' : '0',
             cursor: 'pointer',

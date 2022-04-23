@@ -125,40 +125,71 @@ class CartOverlay extends Component {
   }
 
   renderProductSizesButtons(product) {
+    const colorAttribute = product?.attributes?.filter(
+      (attribute) => attribute.name === 'Color'
+    );
+    const allAttributesWithoutColor = product?.attributes?.filter(
+      (attribute) => attribute.name !== 'Color'
+    );
     return (
-      <div className={styles.size_section}>
-        {product.attributes[0]?.items[0].value.includes('#')
-          ? product.attributes[0]?.items.map((size) => (
-              <button
-                onClick={() => this.selectedSize(product, size)}
-                key={size.id}
-                style={{backgroundColor: size.value}}
-                className={`${styles.color_button} ${
-                  product.selectedSize.value === size.value
-                    ? styles.active_color_size
-                    : ''
-                }`}
-              />
-            )) // Else
-          : product.attributes[0]?.items.map((size) => (
-              <button
-                onClick={() => this.selectedSize(product, size)}
-                key={size.id}
-                className={`${
-                  product.attributes[0]?.id === 'Capacity'
-                    ? styles.capacity_size_button
-                    : styles.size_button
-                } ${
-                  product.selectedSize.value === size.value
-                    ? styles.active_button_size
-                    : ''
-                }`}
-                style={{width: size.value.length > 2 ? '34px' : '24px'}}
-              >
-                {size.value}
-              </button>
+      <>
+        {!!allAttributesWithoutColor.length && (
+          <>
+            {allAttributesWithoutColor.map((attribute) => (
+              <div className={styles.size_section} key={attribute.name}>
+                <p className={styles.size_title}>{attribute?.name}:</p>
+                {attribute?.items.map((size) => (
+                  <button
+                    // onClick={() => this.selectedSize(product, size)}
+                    key={size.id}
+                    className={`${styles.size_button}  ${
+                      product?.selectedAttributes[size?.name] === size?.value
+                        ? styles.active_button_size
+                        : ''
+                    } ${
+                      product.selectedAttributes[size?.name] === 'Capacity'
+                        ? styles.capacity_size_button
+                        : ' '
+                    }
+                    
+                    `}
+                    style={{
+                      width: size.value.length > 2 ? '46px' : '24px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {size.value}
+                  </button>
+                ))}
+              </div>
             ))}
-      </div>
+          </>
+        )}
+
+        {!!colorAttribute.length && (
+          <div className={styles.size_section} key={colorAttribute[0]?.name}>
+            <p className={styles.size_title}>{colorAttribute[0]?.name}:</p>
+            {colorAttribute[0]?.items.map((size) => (
+              <div
+                className={`${styles.color_button_Wrapper} ${
+                  product?.selectedAttributes[size?.name] === size?.value
+                    ? styles.active_color
+                    : ''
+                }`}
+                style={{cursor: 'pointer'}}
+              >
+                <button
+                  // onClick={() => this.selectedSize(product, size)}
+                  key={size.id}
+                  style={{backgroundColor: size.value, cursor: 'pointer'}}
+                  className={`${styles.color_button} 
+                `}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </>
     );
   }
 
@@ -228,7 +259,11 @@ class CartOverlay extends Component {
           {this.renderProductCartPrice(product)}
           {this.renderProductSizesButtons(product)}
         </div>
-        <div className={styles.col_6 + ' ' + styles.cart_product}>
+        <div
+          className={`${styles.col_6} ${styles.cart_product} ${
+            product?.attributes?.length > 2 ? styles.col_6_3_items : ''
+          }`}
+        >
           {this.renderProductCounterButton(product)}
           <div className={styles.product_cart_image}>
             <img src={product.gallery[0]} alt='' />
@@ -242,14 +277,17 @@ class CartOverlay extends Component {
     return (
       <ul className={styles.cart_items_list}>
         <li className={styles.cart_items_list_title}>
-          <span>My Bag,</span> {this.props.cart.itemsCount} items
+          <span style={{fontWeight: 'bold'}}>My Bag,</span>{' '}
+          {this.props.cart.itemsCount} items
         </li>
         {Object.keys(this.props.cart.items).map((key) => {
           let product = this.props.cart.items[key];
           return (
             <li
-              className={styles.cart_list_item}
-              key={product.id + product.selectedSize?.value}
+              className={`${styles.cart_list_item} ${
+                product?.attributes?.length > 2 ? styles.cart_list_3item : ' '
+              }`}
+              // key={product.id + product.selectedSize?.value}
             >
               {this.renderProductBox(product)}
             </li>

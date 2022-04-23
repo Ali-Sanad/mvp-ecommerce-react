@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {withLocation, withParams} from '../../utils/hoc';
 import {CurrencySwitcherAction, getProductsListAction} from '../../actions';
 import Product from './Product';
+import Spinner from '../spinner/Spinner';
 import styles from './Product.module.css';
 
 const mapStateToProps = (state) => {
@@ -23,13 +24,19 @@ const mapDispatchToProps = (dispatch) => {
 class ProductsList extends Component {
   constructor(...props) {
     super(...props);
-    this.state = {filteredProducts: []};
+    this.state = {filteredProducts: [], isLoading: false};
     this.renderAllProducts = this.renderAllProducts.bind(this);
     this.setCurrencySwitcherState = this.setCurrencySwitcherState.bind(this);
   }
 
-  componentDidMount() {
-    this.props.getProductsListAction();
+  async componentDidMount() {
+    try {
+      this.setState({isLoading: true});
+      await this.props.getProductsListAction();
+      this.setState({isLoading: false});
+    } catch (error) {
+      this.setState({isLoading: true});
+    }
   }
 
   renderAllProducts() {
@@ -71,7 +78,11 @@ class ProductsList extends Component {
           {this.props.location.pathname === '/' && 'All'}
           {this.props.params && this.props?.params.category}
         </h3>
-        <div className={styles.row}>{this.renderAllProducts()}</div>
+        {this.state.isLoading ? (
+          <Spinner />
+        ) : (
+          <div className={styles.row}>{this.renderAllProducts()}</div>
+        )}
       </div>
     );
   }
