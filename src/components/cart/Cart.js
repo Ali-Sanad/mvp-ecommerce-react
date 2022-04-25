@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {
   AddItemToCart,
   CartSwitcherAction,
+  removeItemData,
   RemoveItemFromCart,
   ResizeItemFromCart,
 } from '../../actions';
@@ -153,6 +154,14 @@ class Cart extends Component {
 
   getCurrentProductImage(key) {
     return this.state.cardPageImageIndexes[key]?.currentIndex;
+  }
+
+  renderRemoveItemDataFromCartButton(id) {
+    return (
+      <div className={styles.remove_view_bag_button}>
+        <button onClick={() => this.props.removeItemData(id)}>REMOVE</button>
+      </div>
+    );
   }
 
   renderProductSizesSwitcher(product, key) {
@@ -324,6 +333,7 @@ class Cart extends Component {
                   <div className={styles.left_side}>
                     {this.renderMainProductData(product)}
                     {this.renderProductSizesSwitcher(product, key)}
+                    {this.renderRemoveItemDataFromCartButton(key)}
                   </div>
                   <div className={styles.right_side}>
                     {this.renderCartCounterButtons(product)}
@@ -370,6 +380,7 @@ const mapDispatchToProps = (dispatch) => {
     resizeItemFromCart: (item, newSize, attributeName, oldKey) =>
       dispatch(ResizeItemFromCart(item, newSize, attributeName, oldKey)),
     cartSwitcherAction: () => dispatch(CartSwitcherAction()),
+    removeItemData: (id) => dispatch(removeItemData(id)),
   };
 };
 

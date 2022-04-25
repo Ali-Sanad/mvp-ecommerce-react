@@ -4,6 +4,7 @@ import {
   TOGGLE_CART,
   CURRENCY_SWITCHER,
   REMOVE,
+  REMOVE_ITEM_DATA,
   RESIZE,
   GET_PRODUCTS_LIST,
   GET_PRODUCT_DESCRIPTION,
@@ -34,6 +35,12 @@ export const RemoveItemFromCart = (item) => {
   return {
     type: REMOVE,
     item: item,
+  };
+};
+export const removeItemData = (itemId) => {
+  return {
+    type: REMOVE_ITEM_DATA,
+    itemId: itemId,
   };
 };
 

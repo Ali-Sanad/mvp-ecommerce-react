@@ -46,8 +46,9 @@ class Product extends Component {
     if (!this.props.product) {
       return '';
     }
-
-    this.props.addItemToCart(this.props.product);
+    let clonedProduct = {...this.props.product};
+    clonedProduct.selectedAttributes = {};
+    this.props.addItemToCart(clonedProduct);
   }
 
   renderProductInfo() {
@@ -69,9 +70,9 @@ class Product extends Component {
       <div id='product' className={styles.product_card}>
         <img
           onClick={
-            this.props.product.inStock &&
-            !this.props.product.attributes.length &&
-            this.addItem
+            this.props.product.inStock && !this.props.product.attributes.length
+              ? this.addItem
+              : () => {}
           }
           style={{
             opacity: this.props.product.inStock ? '1' : '0',

@@ -1,4 +1,4 @@
-import {ADD, REMOVE, RESIZE} from '../actions/types';
+import {ADD, REMOVE, RESIZE, REMOVE_ITEM_DATA} from '../actions/types';
 
 const initialState = {items: {}, itemsCount: 0};
 const cartReducer = (state = initialState, action) => {
@@ -65,6 +65,21 @@ const cartReducer = (state = initialState, action) => {
       }
       return {...state};
     }
+    case REMOVE_ITEM_DATA: {
+      const {itemId} = action;
+
+      const clonedItems = {...state.items};
+      const toBeDeletedItem = clonedItems[itemId];
+      const toBeDeletedItemCounter = toBeDeletedItem.counter;
+
+      delete clonedItems[itemId];
+      return {
+        ...state,
+        items: clonedItems,
+        itemsCount: state.itemsCount - toBeDeletedItemCounter,
+      };
+    }
+
     case RESIZE: {
       /*  
        item,
@@ -72,9 +87,9 @@ const cartReducer = (state = initialState, action) => {
       attributeName,
       oldKey
      */
-      const reSizeItemKey =
-        action.item.id + '-' + action.item.selectedAttributes?.value;
-      const newItemKey = action.item.id + '-' + action.newSize.value;
+      // const reSizeItemKey =
+      //   action.item.id + '-' + action.item.selectedAttributes?.value;
+      // const newItemKey = action.item.id + '-' + action.newSize.value;
 
       let newItem = action.item;
       newItem.selectedAttributes = {

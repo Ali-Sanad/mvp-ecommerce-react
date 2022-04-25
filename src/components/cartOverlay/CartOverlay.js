@@ -263,14 +263,14 @@ class CartOverlay extends Component {
           <span style={{fontWeight: 'bold'}}>My Bag,</span>{' '}
           {this.props.cart.itemsCount} items
         </li>
-        {Object.keys(this.props.cart.items).map((key) => {
+        {Object.keys(this.props.cart.items).map((key, idx) => {
           let product = this.props.cart.items[key];
           return (
             <li
               className={`${styles.cart_list_item} ${
                 product?.attributes?.length > 2 ? styles.cart_list_3item : ' '
               }`}
-              // key={product.id + product.selectedSizeHandler?.value}
+              key={product.id + idx}
             >
               {this.renderProductBox(product)}
             </li>

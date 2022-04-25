@@ -2,6 +2,7 @@ export const CURRENCY_CHANGE = 'CURRENCY_CHANGE';
 export const ADD = 'ADD';
 export const REMOVE = 'REMOVE';
 export const RESIZE = 'RESIZE';
+export const REMOVE_ITEM_DATA = 'REMOVE_ITEM_DATA';
 export const CURRENCY_SWITCHER = 'CURRENCY_SWITCHER';
 export const TOGGLE_CART = 'TOGGLE_CART';
 

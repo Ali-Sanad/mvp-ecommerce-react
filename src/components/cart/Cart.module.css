@@ -223,6 +223,25 @@
   background-color: #5ece7b;
   border: 1px solid #5ece7b;
   color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.remove_view_bag_button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.remove_view_bag_button button {
+  box-sizing: border-box;
+  height: 43px;
+  position: static;
+  width: 280px;
+  background-color: #ff0000;
+  border: none;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
 }
 .totalProductsPriceAndQuantity {
