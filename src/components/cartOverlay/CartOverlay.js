@@ -8,6 +8,7 @@ import {
   RemoveItemFromCart,
   ResizeItemFromCart,
 } from '../../actions';
+import {transformProductInCartAttributeKey} from '../../utils/helpers';
 import styles from './CartOverlay.module.css';
 
 class CartOverlay extends Component {
@@ -22,7 +23,7 @@ class CartOverlay extends Component {
     this.addItem = this.addItem.bind(this);
     this.removeItem = this.removeItem.bind(this);
     this.getTotal = this.getTotal.bind(this);
-    this.selectedSizeHandler = this.selectedSizeHandler.bind(this);
+    this.resizeAttributeHandler = this.resizeAttributeHandler.bind(this);
     this.setMouseOver = this.setMouseOver.bind(this);
     this.hideActiveContextMenu = this.hideActiveContextMenu.bind(this);
     this.renderProductCartPrice = this.renderProductCartPrice.bind(this);
@@ -58,8 +59,20 @@ class CartOverlay extends Component {
     return total.toFixed(2);
   }
 
-  selectedSizeHandler(product, newSize) {
-    this.props.resizeItemFromCart(product, newSize);
+  resizeAttributeHandler(product, newSize, oldKey, attributeName) {
+    const newKey = transformProductInCartAttributeKey(
+      product,
+      newSize,
+      oldKey,
+      attributeName
+    );
+    this.props.resizeItemFromCart(
+      product,
+      newSize,
+      attributeName,
+      oldKey,
+      newKey
+    );
     this.forceUpdate();
   }
 
@@ -104,7 +117,7 @@ class CartOverlay extends Component {
     );
   }
 
-  renderProductSizesButtons(product) {
+  renderProductSizesButtons(product, key) {
     const colorAttribute = product?.attributes?.filter(
       (attribute) => attribute.name === 'Color'
     );
@@ -120,7 +133,18 @@ class CartOverlay extends Component {
                 <p className={styles.size_title}>{attribute?.name}:</p>
                 {attribute?.items.map((size) => (
                   <button
-                    onClick={() => this.selectedSizeHandler(product, size)}
+                    disabled={
+                      product?.selectedAttributes[attribute?.name] ===
+                      size?.value
+                    }
+                    onClick={() =>
+                      this.resizeAttributeHandler(
+                        product,
+                        size,
+                        key,
+                        attribute?.name
+                      )
+                    }
                     key={size.id}
                     className={`${styles.size_button}  ${
                       product?.selectedAttributes[attribute?.name] ===
@@ -162,7 +186,18 @@ class CartOverlay extends Component {
                 key={size.id}
               >
                 <button
-                  onClick={() => this.selectedSizeHandler(product, size)}
+                  disabled={
+                    product?.selectedAttributes[colorAttribute[0]?.name] ===
+                    size?.value
+                  }
+                  onClick={() =>
+                    this.resizeAttributeHandler(
+                      product,
+                      size,
+                      key,
+                      colorAttribute[0]?.name
+                    )
+                  }
                   key={size.id}
                   style={{backgroundColor: size.value, cursor: 'pointer'}}
                   className={`${styles.color_button} 
@@ -233,14 +268,14 @@ class CartOverlay extends Component {
     );
   }
 
-  renderProductBox(product) {
+  renderProductBox(product, key) {
     return (
       <div className={styles.row + ' ' + styles.product_box}>
         <div className={styles.col_6}>
           <p className={styles.product_cart_brand}>{product.brand}</p>
           <p className={styles.product_cart_name}>{product.name}</p>
           {this.renderProductCartPrice(product)}
-          {this.renderProductSizesButtons(product)}
+          {this.renderProductSizesButtons(product, key)}
         </div>
         <div
           className={`${styles.col_6} ${styles.cart_product} ${
@@ -272,7 +307,7 @@ class CartOverlay extends Component {
               }`}
               key={product.id + idx}
             >
-              {this.renderProductBox(product)}
+              {this.renderProductBox(product, key)}
             </li>
           );
         })}
@@ -335,8 +370,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addItemToCart: (item) => dispatch(AddItemToCart(item)),
     removeItemFromCart: (item) => dispatch(RemoveItemFromCart(item)),
-    resizeItemFromCart: (item, newSize) =>
-      dispatch(ResizeItemFromCart(item, newSize)),
+    resizeItemFromCart: (item, newSize, attributeName, oldKey, newKey) =>
+      dispatch(
+        ResizeItemFromCart(item, newSize, attributeName, oldKey, newKey)
+      ),
     cartSwitcherAction: () => dispatch(CartSwitcherAction()),
     currencySwitcherAction: () => dispatch(CurrencySwitcherAction()),
   };

@@ -7,6 +7,7 @@ import {
   RemoveItemFromCart,
   ResizeItemFromCart,
 } from '../../actions';
+import {transformProductInCartAttributeKey} from '../../utils/helpers';
 import styles from './Cart.module.css';
 
 class Cart extends Component {
@@ -16,7 +17,7 @@ class Cart extends Component {
       cardPageImageIndexes: {},
     };
     this.renderProductPrice = this.renderProductPrice.bind(this);
-    this.selectedSizeHandler = this.selectedSizeHandler.bind(this);
+    this.resizeAttributeHandler = this.resizeAttributeHandler.bind(this);
     this.addItem = this.addItem.bind(this);
     this.removeItem = this.removeItem.bind(this);
     this.renderCartItems = this.renderCartItems.bind(this);
@@ -40,11 +41,11 @@ class Cart extends Component {
   }
 
   renderProductPrice(product) {
-    const price = product.prices.find(
+    const price = product?.prices?.find(
       (price) =>
-        price.currency.label === this.props.currency.activeCurrency.label
+        price?.currency?.label === this.props.currency.activeCurrency.label
     );
-    return price.amount;
+    return price?.amount;
   }
 
   getTotal() {
@@ -117,10 +118,21 @@ class Cart extends Component {
     this.forceUpdate();
   }
 
-  selectedSizeHandler(product, newSize, oldKey, attributeName) {
-    console.log({product, newSize, oldKey, attributeName});
-    this.props.resizeItemFromCart(product, newSize, attributeName, oldKey);
-    let newKey = product.id + '-' + newSize.value;
+  resizeAttributeHandler(product, newSize, oldKey, attributeName) {
+    const newKey = transformProductInCartAttributeKey(
+      product,
+      newSize,
+      oldKey,
+      attributeName
+    );
+
+    this.props.resizeItemFromCart(
+      product,
+      newSize,
+      attributeName,
+      oldKey,
+      newKey
+    );
     let temp = {...this.state.cardPageImageIndexes};
     let newIndex = {...temp[oldKey]};
     delete temp[oldKey];
@@ -173,19 +185,23 @@ class Cart extends Component {
     );
     return (
       <>
-        {!!allAttributesWithoutColor.length && (
+        {!!allAttributesWithoutColor?.length && (
           <>
             {allAttributesWithoutColor.map((attribute) => (
               <div className={styles.size_section} key={attribute.name}>
                 <p className={styles.size_title}>{attribute?.name}:</p>
                 {attribute?.items.map((size) => (
                   <button
+                    disabled={
+                      product?.selectedAttributes[attribute?.name] ===
+                      size?.value
+                    }
                     onClick={() =>
-                      this.selectedSizeHandler(
+                      this.resizeAttributeHandler(
                         product,
                         size,
                         key,
-                        attribute.name
+                        attribute?.name
                       )
                     }
                     key={size.id}
@@ -205,7 +221,7 @@ class Cart extends Component {
           </>
         )}
 
-        {!!colorAttribute.length && (
+        {!!colorAttribute?.length && (
           <div className={styles.size_section} key={colorAttribute[0]?.name}>
             <p className={styles.size_title}>{colorAttribute[0]?.name}:</p>
             {colorAttribute[0]?.items.map((size) => (
@@ -220,8 +236,12 @@ class Cart extends Component {
                 style={{cursor: 'pointer'}}
               >
                 <button
+                  disabled={
+                    product?.selectedAttributes[colorAttribute[0]?.name] ===
+                    size?.value
+                  }
                   onClick={() =>
-                    this.selectedSizeHandler(
+                    this.resizeAttributeHandler(
                       product,
                       size,
                       key,
@@ -273,7 +293,7 @@ class Cart extends Component {
         />
         <img
           className={styles.bag_main_product_image}
-          src={product.gallery[this.getCurrentProductImage(key)]}
+          src={product?.gallery[this.getCurrentProductImage(key)]}
           alt=''
         />
       </div>
@@ -377,8 +397,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addItemToCart: (item) => dispatch(AddItemToCart(item)),
     removeItemFromCart: (item) => dispatch(RemoveItemFromCart(item)),
-    resizeItemFromCart: (item, newSize, attributeName, oldKey) =>
-      dispatch(ResizeItemFromCart(item, newSize, attributeName, oldKey)),
+    resizeItemFromCart: (item, newSize, attributeName, oldKey, newKey) =>
+      dispatch(
+        ResizeItemFromCart(item, newSize, attributeName, oldKey, newKey)
+      ),
     cartSwitcherAction: () => dispatch(CartSwitcherAction()),
     removeItemData: (id) => dispatch(removeItemData(id)),
   };

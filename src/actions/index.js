@@ -44,13 +44,20 @@ export const removeItemData = (itemId) => {
   };
 };
 
-export const ResizeItemFromCart = (item, newSize, attributeName, oldKey) => {
+export const ResizeItemFromCart = (
+  item,
+  newSize,
+  attributeName,
+  oldKey,
+  newKey
+) => {
   return {
     type: RESIZE,
     item: item,
     newSize: newSize,
     attributeName: attributeName,
     oldKey: oldKey,
+    newKey: newKey,
   };
 };
 

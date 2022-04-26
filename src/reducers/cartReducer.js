@@ -19,7 +19,6 @@ const cartReducer = (state = initialState, action) => {
       let existedItemInCart = Object.keys(state.items).filter((item) =>
         selectedAttributesArray.every((attr) => item.includes(attr))
       );
-      console.log(existedItemInCart);
 
       if (!!existedItemInCart.length) {
         let newItem = {...state.items[existedItemInCart[0]]};
@@ -46,7 +45,6 @@ const cartReducer = (state = initialState, action) => {
       }
 
       let selectedAttributesArray = removeItemId.split('?')[1].split('&');
-      console.log(selectedAttributesArray);
       let existedItemInCart = Object.keys(state.items).filter((item) =>
         selectedAttributesArray.every((attr) => item.includes(attr))
       );
@@ -81,39 +79,50 @@ const cartReducer = (state = initialState, action) => {
     }
 
     case RESIZE: {
-      /*  
-       item,
-      newSize,
-      attributeName,
-      oldKey
-     */
-      // const reSizeItemKey =
-      //   action.item.id + '-' + action.item.selectedAttributes?.value;
-      // const newItemKey = action.item.id + '-' + action.newSize.value;
+      const newState = {...state};
 
-      let newItem = action.item;
-      newItem.selectedAttributes = {
-        ...action.item.selectedAttributes,
-        [action.attributeName]: action.newSize.value,
-      };
+      let selectedAttributesArray = action.newKey.split('?')[1].split('&');
+      let existedItemInCart = Object.keys(state.items).filter((item) =>
+        selectedAttributesArray.every((attr) => item.includes(attr))
+      );
 
-      // const updatedItems = Object.keys(state.items).reduce(
-      //   (newState, oldProductInCartKey) => {
-      //     if (newItemKey === oldProductInCartKey) {
-      //       newItem.counter += state.items[oldProductInCartKey].counter;
-      //       newState[newItemKey] = newItem;
-      //     } else if (reSizeItemKey === oldProductInCartKey) {
-      //       newState[newItemKey] = newItem;
-      //     } else {
-      //       newState[oldProductInCartKey] = state.items[oldProductInCartKey];
-      //     }
-      //     return newState;
-      //   },
-      //   {}
-      // );
+      Object.keys(state.items).forEach((existedItemInCartKey) => {
+        if (
+          existedItemInCartKey === action.newKey &&
+          !!existedItemInCart.length
+        ) {
+          newState.items[existedItemInCartKey] = {
+            ...newState.items[existedItemInCartKey],
+            counter:
+              newState.items[existedItemInCartKey].counter +
+              action.item.counter,
+          };
+        } else if (
+          existedItemInCartKey !== action.newKey &&
+          !!existedItemInCart.length
+        ) {
+          let newItem = {...newState.items[existedItemInCartKey]};
 
-      // state.items = updatedItems;
-      return {...state};
+          newItem = {
+            ...newItem,
+            counter: newItem.counter + action.item.counter,
+          };
+          newState.items[existedItemInCartKey] = newItem;
+          delete newState.items[action.oldKey];
+        } else {
+          newState.items[action.newKey] = newState.items[action.oldKey];
+          newState.items[action.newKey] = {
+            ...action.item,
+            selectedAttributes: {
+              ...action.item.selectedAttributes,
+              [action.attributeName]: action.newSize.value,
+            },
+          };
+          delete newState.items[action.oldKey];
+        }
+      });
+
+      return {...state, ...newState};
     }
     default:
       return {...state};

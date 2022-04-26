@@ -6,22 +6,6 @@ import {AddItemToCart, getProductDercsiptionAction} from '../../actions';
 import Spinner from '../spinner/Spinner';
 import styles from './Product.module.css';
 
-const mapStateToProps = (state) => {
-  return {
-    currency: state.currency,
-    cart: state.cart,
-    productDescription: state.productsList.productDescription,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addItemToCart: (item) => dispatch(AddItemToCart(item)),
-    getProductDercsiptionAction: (id) =>
-      dispatch(getProductDercsiptionAction(id)),
-  };
-};
-
 class ProductDescription extends Component {
   constructor(props) {
     super(props);
@@ -169,9 +153,16 @@ class ProductDescription extends Component {
     if (!this.props.productDescription) {
       return '';
     }
-    let temp = Object.assign({}, this.props.productDescription);
-    temp.selectedAttributes = this.state.selectedAttributes;
-    this.props.addItemToCart(temp);
+    let clonedProductDescription = {...this.props.productDescription};
+    clonedProductDescription.selectedAttributes = this.state.selectedAttributes;
+    if (
+      this.props.productDescription.attributes.length ===
+      Object.keys(this.state.selectedAttributes).length
+    ) {
+      this.props.addItemToCart(clonedProductDescription);
+    } else {
+      alert('Please select all attributes');
+    }
   }
 
   renderProductInfo() {
@@ -268,6 +259,22 @@ class ProductDescription extends Component {
     return this.state.isLoading ? <Spinner /> : this.renderProductDescription();
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    currency: state.currency,
+    cart: state.cart,
+    productDescription: state.productsList.productDescription,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addItemToCart: (item) => dispatch(AddItemToCart(item)),
+    getProductDercsiptionAction: (id) =>
+      dispatch(getProductDercsiptionAction(id)),
+  };
+};
 
 export default connect(
   mapStateToProps,
