@@ -39,9 +39,6 @@ class Cart extends Component {
   componentDidMount() {
     this.setProductInCartImageActiveIndexs();
   }
-  componentDidUpdate() {
-    console.log(this.state.productsInCartActiveImageIndexs);
-  }
 
   renderProductPrice(product) {
     const price = product?.prices?.find(
@@ -214,7 +211,6 @@ class Cart extends Component {
   }
 
   renderProductSizesSwitcher(product) {
-    console.log({product});
     const colorAttribute = product?.attributes?.filter(
       (attribute) => attribute.name === 'Color'
     );
