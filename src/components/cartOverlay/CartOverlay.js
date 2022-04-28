@@ -8,7 +8,6 @@ import {
   RemoveItemFromCart,
   ResizeItemFromCart,
 } from '../../actions';
-import {transformProductInCartAttributeKey} from '../../utils/helpers';
 import styles from './CartOverlay.module.css';
 
 class CartOverlay extends Component {
@@ -58,21 +57,18 @@ class CartOverlay extends Component {
     return total.toFixed(2);
   }
 
-  resizeAttributeHandler(product, newSize, oldKey, attributeName) {
-    const newKey = transformProductInCartAttributeKey(
-      product,
-      newSize,
-      oldKey,
-      attributeName
-    );
+  resizeAttributeHandler(
+    product,
+    newSize,
+    attributeName,
+    oldSelectedAttributes
+  ) {
     this.props.resizeItemFromCart(
       product,
       newSize,
       attributeName,
-      oldKey,
-      newKey
+      oldSelectedAttributes
     );
-    this.forceUpdate();
   }
 
   setMouseOver() {
@@ -140,7 +136,8 @@ class CartOverlay extends Component {
                       this.resizeAttributeHandler(
                         product,
                         size,
-                        attribute?.name
+                        attribute?.name,
+                        product?.selectedAttributes
                       )
                     }
                     key={size.id}
@@ -192,7 +189,8 @@ class CartOverlay extends Component {
                     this.resizeAttributeHandler(
                       product,
                       size,
-                      colorAttribute[0]?.name
+                      colorAttribute[0]?.name,
+                      product?.selectedAttributes
                     )
                   }
                   key={size.id}
@@ -219,7 +217,7 @@ class CartOverlay extends Component {
         >
           +
         </button>
-        {product.counter}
+        {product.count}
         <button
           onClick={() => {
             this.removeItem(product);

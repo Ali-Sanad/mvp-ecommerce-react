@@ -55,19 +55,16 @@ const cartReducer = (state = initialState, action) => {
     }
 
     case RESIZE: {
-      console.log({payload});
-      //payload ==> product, newSize, oldSelectedAttributes, attributeName
-
       const clonedProducts = [...state.products];
 
       //if the same products is in cart with the same incoming new size - change it's count
       const productInCartWithTheSameIncomingAttributes = clonedProducts.find(
         (item) =>
           item.id === payload.product.id &&
-          isEqual(
-            item.selectedAttributes[payload.attributeName],
-            payload.newSize.value
-          )
+          isEqual(item.selectedAttributes, {
+            ...payload.oldSelectedAttributes,
+            [payload.attributeName]: payload.newSize.value,
+          })
       );
       if (productInCartWithTheSameIncomingAttributes) {
         productInCartWithTheSameIncomingAttributes.count +=
@@ -79,10 +76,7 @@ const cartReducer = (state = initialState, action) => {
       const productInCartWithDifferentIncomingAttributes = clonedProducts.find(
         (item) =>
           item.id === payload.product.id &&
-          isEqual(
-            item.selectedAttributes[payload.attributeName],
-            payload.oldSelectedAttributes[payload.attributeName]
-          )
+          isEqual(item.selectedAttributes, payload.oldSelectedAttributes)
       );
 
       if (productInCartWithDifferentIncomingAttributes) {

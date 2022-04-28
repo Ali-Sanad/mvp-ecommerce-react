@@ -137,13 +137,6 @@ class Cart extends Component {
       attributeName,
       oldSelectedAttributes
     );
-    // let temp = {...this.state.cardPageImageIndexes};
-    // let newIndex = {...temp[oldKey]};
-    // delete temp[oldKey];
-    // temp[newKey] = newIndex;
-    // this.setState({
-    //   cardPageImageIndexes: temp,
-    // });
 
     this.forceUpdate();
   }
