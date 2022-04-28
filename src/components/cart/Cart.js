@@ -7,14 +7,14 @@ import {
   RemoveItemFromCart,
   ResizeItemFromCart,
 } from '../../actions';
-import {transformProductInCartAttributeKey} from '../../utils/helpers';
+import isEqual from 'lodash/isEqual';
 import styles from './Cart.module.css';
 
 class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardPageImageIndexes: {},
+      productsInCartActiveImageIndexs: [],
     };
     this.renderProductPrice = this.renderProductPrice.bind(this);
     this.resizeAttributeHandler = this.resizeAttributeHandler.bind(this);
@@ -23,8 +23,10 @@ class Cart extends Component {
     this.renderCartItems = this.renderCartItems.bind(this);
     this.nextProductImage = this.nextProductImage.bind(this);
     this.prevProductImage = this.prevProductImage.bind(this);
-    this.setCardPageImageIndexes = this.setCardPageImageIndexes.bind(this);
-    this.getCurrentProductImage = this.getCurrentProductImage.bind(this);
+    this.setProductInCartImageActiveIndexs =
+      this.setProductInCartImageActiveIndexs.bind(this);
+    this.getCurrentProductImageIndex =
+      this.getCurrentProductImageIndex.bind(this);
     this.renderProductSizesSwitcher =
       this.renderProductSizesSwitcher.bind(this);
     this.renderProductInCartImage = this.renderProductInCartImage.bind(this);
@@ -35,9 +37,10 @@ class Cart extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      cardPageImageIndexes: this.setCardPageImageIndexes(),
-    });
+    this.setProductInCartImageActiveIndexs();
+  }
+  componentDidUpdate() {
+    console.log(this.state.productsInCartActiveImageIndexs);
   }
 
   renderProductPrice(product) {
@@ -50,13 +53,12 @@ class Cart extends Component {
 
   getTotal() {
     let total = 0;
-    Object.keys(this.props.cart.items).filter((key) => {
-      let product = this.props.cart.items[key];
+    this.props.cart.products?.filter((product) => {
       let price = product?.prices.find(
         (price) =>
           price.currency.label === this.props.currency.activeCurrency.label
       );
-      total += price?.amount * product?.counter;
+      total += price?.amount * product?.count;
       return total;
     });
     return total.toFixed(2);
@@ -74,7 +76,7 @@ class Cart extends Component {
         <div className={styles.total_box}>
           <div className={styles.total_title}>Qty: </div>
           <div className={styles.total_amount}>
-            {this.props?.cart?.itemsCount}
+            {this.props?.cart?.productsCount}
           </div>
         </div>
         <div className={styles.total_box}>
@@ -98,14 +100,19 @@ class Cart extends Component {
     );
   }
 
-  setCardPageImageIndexes() {
-    return Object.keys(this.props.cart.items).reduce((newImageIndexes, key) => {
-      newImageIndexes[key] = {
-        currentIndex: 0,
-        imageCount: this.props.cart.items[key].gallery.length,
-      };
-      return newImageIndexes;
-    }, {});
+  setProductInCartImageActiveIndexs() {
+    return this.props.cart.products?.map((product) => {
+      return this.setState((prev) => ({
+        productsInCartActiveImageIndexs: [
+          ...prev.productsInCartActiveImageIndexs,
+          {
+            id: product.id,
+            activeImageIndex: 0,
+            selectedAttributes: product.selectedAttributes,
+          },
+        ],
+      }));
+    });
   }
 
   addItem(product) {
@@ -118,65 +125,103 @@ class Cart extends Component {
     this.forceUpdate();
   }
 
-  resizeAttributeHandler(product, newSize, oldKey, attributeName) {
-    const newKey = transformProductInCartAttributeKey(
-      product,
-      newSize,
-      oldKey,
-      attributeName
-    );
-
+  resizeAttributeHandler(
+    product,
+    newSize,
+    attributeName,
+    oldSelectedAttributes
+  ) {
     this.props.resizeItemFromCart(
       product,
       newSize,
       attributeName,
-      oldKey,
-      newKey
+      oldSelectedAttributes
     );
-    let temp = {...this.state.cardPageImageIndexes};
-    let newIndex = {...temp[oldKey]};
-    delete temp[oldKey];
-    temp[newKey] = newIndex;
-    this.setState({
-      cardPageImageIndexes: temp,
-    });
+    // let temp = {...this.state.cardPageImageIndexes};
+    // let newIndex = {...temp[oldKey]};
+    // delete temp[oldKey];
+    // temp[newKey] = newIndex;
+    // this.setState({
+    //   cardPageImageIndexes: temp,
+    // });
 
     this.forceUpdate();
   }
 
-  nextProductImage(key) {
-    let temp = {...this.state.cardPageImageIndexes};
-    if (temp[key].imageCount - 1 > temp[key].currentIndex) {
-      temp[key].currentIndex++;
-      this.setState({
-        cardPageImageIndexes: temp,
-      });
+  nextProductImage(product) {
+    let currentActiveIndex = this.getCurrentProductImageIndex(product);
+    if (currentActiveIndex === product.gallery.length - 1) {
+      currentActiveIndex = 0;
+    } else {
+      currentActiveIndex++;
     }
+    this.setState((prev) => ({
+      productsInCartActiveImageIndexs: prev.productsInCartActiveImageIndexs.map(
+        (item) => {
+          if (
+            item.id === product.id &&
+            isEqual(item.selectedAttributes, product.selectedAttributes)
+          ) {
+            return {
+              ...item,
+              activeImageIndex: currentActiveIndex,
+            };
+          }
+          return item;
+        }
+      ),
+    }));
+    this.forceUpdate();
   }
 
-  prevProductImage(key) {
-    let temp = {...this.state.cardPageImageIndexes};
-    if (0 < temp[key].currentIndex) {
-      temp[key].currentIndex--;
-      this.setState({
-        cardPageImageIndexes: temp,
-      });
+  prevProductImage(product) {
+    let currentActiveIndex = this.getCurrentProductImageIndex(product);
+    if (currentActiveIndex === 0) {
+      currentActiveIndex = product.gallery.length - 1;
+    } else {
+      currentActiveIndex--;
     }
+    this.setState((prev) => ({
+      productsInCartActiveImageIndexs: prev.productsInCartActiveImageIndexs.map(
+        (item) => {
+          if (
+            item.id === product.id &&
+            isEqual(item.selectedAttributes, product.selectedAttributes)
+          ) {
+            return {
+              ...item,
+              activeImageIndex: currentActiveIndex,
+            };
+          }
+          return item;
+        }
+      ),
+    }));
+    this.forceUpdate();
   }
 
-  getCurrentProductImage(key) {
-    return this.state.cardPageImageIndexes[key]?.currentIndex;
+  getCurrentProductImageIndex(product) {
+    const activeIndex = this.state.productsInCartActiveImageIndexs?.filter(
+      (productInCart) =>
+        productInCart.id === product.id &&
+        isEqual(productInCart.selectedAttributes, product.selectedAttributes)
+    )[0]?.activeImageIndex;
+
+    return activeIndex;
   }
 
-  renderRemoveItemDataFromCartButton(id) {
+  renderRemoveItemDataFromCartButton(product) {
     return (
       <div className={styles.remove_view_bag_button}>
-        <button onClick={() => this.props.removeItemData(id)}>REMOVE</button>
+        <button onClick={() => this.props.removeItemData(product)}>
+          REMOVE
+        </button>
       </div>
     );
   }
 
-  renderProductSizesSwitcher(product, key) {
+  renderProductSizesSwitcher(product) {
+    console.log({product});
     const colorAttribute = product?.attributes?.filter(
       (attribute) => attribute.name === 'Color'
     );
@@ -200,8 +245,8 @@ class Cart extends Component {
                       this.resizeAttributeHandler(
                         product,
                         size,
-                        key,
-                        attribute?.name
+                        attribute?.name,
+                        product?.selectedAttributes
                       )
                     }
                     key={size.id}
@@ -244,8 +289,8 @@ class Cart extends Component {
                     this.resizeAttributeHandler(
                       product,
                       size,
-                      key,
-                      colorAttribute[0]?.name
+                      colorAttribute[0]?.name,
+                      product?.selectedAttributes
                     )
                   }
                   key={size.id}
@@ -261,39 +306,28 @@ class Cart extends Component {
     );
   }
 
-  renderProductInCartImage(product, key) {
+  renderProductInCartImage(product) {
     return (
       <div className={styles.product_bag_image}>
         <img
           onClick={() => {
-            this.prevProductImage(key);
+            this.prevProductImage(product);
           }}
-          // style={
-          //   this.state.cardPageImageIndexes[key]?.currentIndex === 0
-          //     ? {display: 'none'}
-          //     : {}
-          // }
           className={styles.bag_image_left_arrow}
           src={'/img/left_arrow.png'}
           alt=''
         />
         <img
           onClick={() => {
-            this.nextProductImage(key);
+            this.nextProductImage(product);
           }}
-          // style={
-          //   this.state.cardPageImageIndexes[key]?.currentIndex ===
-          //   this.state.cardPageImageIndexes[key]?.imageCount - 1
-          //     ? {display: 'none'}
-          //     : {}
-          // }
           className={styles.bag_image_right_arrow}
           src={'/img/right_arrow.png'}
           alt=''
         />
         <img
           className={styles.bag_main_product_image}
-          src={product?.gallery[this.getCurrentProductImage(key)]}
+          src={product?.gallery[this.getCurrentProductImageIndex(product)]}
           alt=''
         />
       </div>
@@ -311,7 +345,7 @@ class Cart extends Component {
         >
           +
         </button>
-        {product.counter}
+        {product.count}
         <button
           onClick={() => {
             this.removeItem(product);
@@ -344,27 +378,26 @@ class Cart extends Component {
           <b>Cart</b>
         </h3>
         <ul className={styles.bag_list}>
-          {Object.keys(this.props.cart.items).map((key) => {
-            let product = this.props.cart.items[key];
+          {this.props.cart.products?.map((product, idx) => {
             return (
-              <React.Fragment key={key}>
+              <React.Fragment key={product.id + idx}>
                 <hr className={styles.horizontal_line} />
-                <li key={key} className={styles.bag_list_item}>
+                <li key={product.id + idx} className={styles.bag_list_item}>
                   <div className={styles.left_side}>
                     {this.renderMainProductData(product)}
-                    {this.renderProductSizesSwitcher(product, key)}
-                    {this.renderRemoveItemDataFromCartButton(key)}
+                    {this.renderProductSizesSwitcher(product)}
+                    {this.renderRemoveItemDataFromCartButton(product)}
                   </div>
                   <div className={styles.right_side}>
                     {this.renderCartCounterButtons(product)}
-                    {this.renderProductInCartImage(product, key)}
+                    {this.renderProductInCartImage(product)}
                   </div>
                 </li>
               </React.Fragment>
             );
           })}
         </ul>
-        {this.props?.cart?.itemsCount > 0 ? (
+        {this.props?.cart?.productsCount > 0 ? (
           <>
             <hr className={styles.horizontal_line} />
             <div className={styles.totalProductsPriceAndQuantity}>

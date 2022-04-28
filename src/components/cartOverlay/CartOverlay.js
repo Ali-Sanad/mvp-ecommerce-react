@@ -47,13 +47,12 @@ class CartOverlay extends Component {
 
   getTotal() {
     let total = 0;
-    Object.keys(this.props.cart.items).filter((key) => {
-      let product = this.props.cart.items[key];
+    this.props.cart.products?.filter((product) => {
       let price = product?.prices.find(
         (price) =>
           price.currency.label === this.props.currency.activeCurrency.label
       );
-      total += price?.amount * product?.counter;
+      total += price?.amount * product?.count;
       return total;
     });
     return total.toFixed(2);
@@ -117,7 +116,7 @@ class CartOverlay extends Component {
     );
   }
 
-  renderProductSizesButtons(product, key) {
+  renderProductSizesButtons(product) {
     const colorAttribute = product?.attributes?.filter(
       (attribute) => attribute.name === 'Color'
     );
@@ -141,7 +140,6 @@ class CartOverlay extends Component {
                       this.resizeAttributeHandler(
                         product,
                         size,
-                        key,
                         attribute?.name
                       )
                     }
@@ -194,7 +192,6 @@ class CartOverlay extends Component {
                     this.resizeAttributeHandler(
                       product,
                       size,
-                      key,
                       colorAttribute[0]?.name
                     )
                   }
@@ -268,14 +265,14 @@ class CartOverlay extends Component {
     );
   }
 
-  renderProductBox(product, key) {
+  renderProductBox(product) {
     return (
       <div className={styles.row + ' ' + styles.product_box}>
         <div className={styles.col_6}>
           <p className={styles.product_cart_brand}>{product.brand}</p>
           <p className={styles.product_cart_name}>{product.name}</p>
           {this.renderProductCartPrice(product)}
-          {this.renderProductSizesButtons(product, key)}
+          {this.renderProductSizesButtons(product)}
         </div>
         <div
           className={`${styles.col_6} ${styles.cart_product} ${
@@ -296,10 +293,9 @@ class CartOverlay extends Component {
       <ul className={styles.cart_items_list}>
         <li className={styles.cart_items_list_title}>
           <span style={{fontWeight: 'bold'}}>My Bag,</span>{' '}
-          {this.props.cart.itemsCount} items
+          {this.props.cart.productsCount} items
         </li>
-        {Object.keys(this.props.cart.items).map((key, idx) => {
-          let product = this.props.cart.items[key];
+        {this.props.cart.products?.map((product, idx) => {
           return (
             <li
               className={`${styles.cart_list_item} ${
@@ -307,7 +303,7 @@ class CartOverlay extends Component {
               }`}
               key={product.id + idx}
             >
-              {this.renderProductBox(product, key)}
+              {this.renderProductBox(product)}
             </li>
           );
         })}
@@ -323,7 +319,7 @@ class CartOverlay extends Component {
     if (!this.props.toggleCartReducer) {
       return null;
     }
-    if (Object.keys(this.props.cart).length) {
+    if (this.props.cart.products.length) {
       return (
         <div className={styles.cart_items}>
           <div
@@ -343,7 +339,7 @@ class CartOverlay extends Component {
     return (
       <div className={styles.cart_box_navbar}>
         <div className={styles.cart_items_count}>
-          <span>{this.props.cart.itemsCount}</span>
+          <span>{this.props.cart.productsCount}</span>
         </div>
         <img
           onClick={this.setActiveContextMenu}

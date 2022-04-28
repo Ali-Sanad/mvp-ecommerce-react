@@ -1,128 +1,96 @@
+import isEqual from 'lodash/isEqual';
 import {ADD, REMOVE, RESIZE, REMOVE_ITEM_DATA} from '../actions/types';
-
-const initialState = {items: {}, itemsCount: 0};
+const initialState = {products: [], productsCount: 0};
 const cartReducer = (state = initialState, action) => {
-  switch (action.type) {
+  const {type, payload} = action;
+  switch (type) {
     case ADD: {
-      //building unique product in cart id based on the selected attributes
-      let itemId = action.item.id + '?';
-      let ObjectArray = Object.keys(action.item.selectedAttributes);
-      for (let attribute in action.item.selectedAttributes) {
-        if (ObjectArray[ObjectArray.length - 1] === attribute) {
-          itemId += `${attribute}=${action.item.selectedAttributes[attribute]}`;
+      let clonedProducts = [...state.products];
+      if (!clonedProducts.length) {
+        clonedProducts = [...clonedProducts, {...payload, count: 1}];
+      } else {
+        const product = clonedProducts.find(
+          (item) =>
+            item.id === payload.id &&
+            isEqual(item.selectedAttributes, payload.selectedAttributes)
+        );
+        if (product) {
+          product.count += 1;
         } else {
-          itemId += `${attribute}=${action.item.selectedAttributes[attribute]}&`;
+          clonedProducts = [...clonedProducts, {...payload, count: 1}];
         }
       }
-
-      let selectedAttributesArray = itemId.split('?')[1].split('&');
-      let existedItemInCart = Object.keys(state.items).filter((item) =>
-        selectedAttributesArray.every((attr) => item.includes(attr))
-      );
-
-      if (!!existedItemInCart.length) {
-        let newItem = {...state.items[existedItemInCart[0]]};
-        newItem.counter++;
-        state.items[existedItemInCart[0]] = newItem;
-      } else {
-        let newItem = {...action.item};
-        newItem.counter = 1;
-        state.items[itemId] = newItem;
-      }
-
-      state.itemsCount++;
-      return {...state};
+      state.productsCount++;
+      return {...state, products: clonedProducts};
     }
     case REMOVE: {
-      let removeItemId = action.item.id + '?';
-      let ObjectArray = Object.keys(action.item.selectedAttributes);
-      for (let attribute in action.item.selectedAttributes) {
-        if (ObjectArray[ObjectArray.length - 1] === attribute) {
-          removeItemId += `${attribute}=${action.item.selectedAttributes[attribute]}`;
-        } else {
-          removeItemId += `${attribute}=${action.item.selectedAttributes[attribute]}&`;
-        }
-      }
-
-      let selectedAttributesArray = removeItemId.split('?')[1].split('&');
-      let existedItemInCart = Object.keys(state.items).filter((item) =>
-        selectedAttributesArray.every((attr) => item.includes(attr))
+      const clonedProducts = [...state.products];
+      const product = clonedProducts.find(
+        (item) =>
+          item.id === payload.id &&
+          isEqual(item.selectedAttributes, payload.selectedAttributes)
       );
-
-      if (!!existedItemInCart.length) {
-        let deletedItem = {...state.items[existedItemInCart[0]]};
-        deletedItem.counter--;
-
-        if (!deletedItem.counter) {
-          delete state.items[existedItemInCart[0]];
-        } else {
-          state.items[existedItemInCart[0]] = deletedItem;
+      if (product) {
+        product.count -= 1;
+        state.productsCount--;
+        if (product.count === 0) {
+          clonedProducts.splice(clonedProducts.indexOf(product), 1);
         }
-
-        state.itemsCount--;
       }
-      return {...state};
+      return {...state, products: clonedProducts};
     }
+
     case REMOVE_ITEM_DATA: {
-      const {itemId} = action;
-
-      const clonedItems = {...state.items};
-      const toBeDeletedItem = clonedItems[itemId];
-      const toBeDeletedItemCounter = toBeDeletedItem.counter;
-
-      delete clonedItems[itemId];
-      return {
-        ...state,
-        items: clonedItems,
-        itemsCount: state.itemsCount - toBeDeletedItemCounter,
-      };
+      const clonedProducts = [...state.products];
+      const product = clonedProducts.find(
+        (item) =>
+          item.id === payload.id &&
+          isEqual(item.selectedAttributes, payload.selectedAttributes)
+      );
+      if (product) {
+        clonedProducts.splice(clonedProducts.indexOf(product), 1);
+        state.productsCount -= product.count;
+      }
+      return {...state, products: clonedProducts};
     }
 
     case RESIZE: {
-      const newState = {...state};
+      console.log({payload});
+      //payload ==> product, newSize, oldSelectedAttributes, attributeName
 
-      let selectedAttributesArray = action.newKey.split('?')[1].split('&');
-      let existedItemInCart = Object.keys(state.items).filter((item) =>
-        selectedAttributesArray.every((attr) => item.includes(attr))
+      const clonedProducts = [...state.products];
+
+      //if the same products is in cart with the same incoming new size - change it's count
+      const productInCartWithTheSameIncomingAttributes = clonedProducts.find(
+        (item) =>
+          item.id === payload.product.id &&
+          isEqual(
+            item.selectedAttributes[payload.attributeName],
+            payload.newSize.value
+          )
+      );
+      if (productInCartWithTheSameIncomingAttributes) {
+        productInCartWithTheSameIncomingAttributes.count +=
+          payload.product.count;
+        clonedProducts.splice(clonedProducts.indexOf(payload.product), 1);
+      }
+
+      //if the same products is in cart with different incoming new size - change it's selectedAttributes
+      const productInCartWithDifferentIncomingAttributes = clonedProducts.find(
+        (item) =>
+          item.id === payload.product.id &&
+          isEqual(
+            item.selectedAttributes[payload.attributeName],
+            payload.oldSelectedAttributes[payload.attributeName]
+          )
       );
 
-      Object.keys(state.items).forEach((existedItemInCartKey) => {
-        if (
-          existedItemInCartKey === action.newKey &&
-          !!existedItemInCart.length
-        ) {
-          newState.items[existedItemInCartKey] = {
-            ...newState.items[existedItemInCartKey],
-            counter:
-              newState.items[existedItemInCartKey].counter +
-              action.item.counter,
-          };
-        } else if (
-          existedItemInCartKey !== action.newKey &&
-          !!existedItemInCart.length
-        ) {
-          let newItem = {...newState.items[existedItemInCartKey]};
-
-          newItem = {
-            ...newItem,
-            counter: newItem.counter + action.item.counter,
-          };
-          newState.items[existedItemInCartKey] = newItem;
-          delete newState.items[action.oldKey];
-        } else {
-          newState.items[action.newKey] = newState.items[action.oldKey];
-          newState.items[action.newKey] = {
-            ...action.item,
-            selectedAttributes: {
-              ...action.item.selectedAttributes,
-              [action.attributeName]: action.newSize.value,
-            },
-          };
-          delete newState.items[action.oldKey];
-        }
-      });
-
-      return {...state, ...newState};
+      if (productInCartWithDifferentIncomingAttributes) {
+        productInCartWithDifferentIncomingAttributes.selectedAttributes[
+          payload.attributeName
+        ] = payload.newSize.value;
+      }
+      return {...state, products: clonedProducts};
     }
     default:
       return {...state};

@@ -24,40 +24,35 @@ export const changeCurrency = (currency) => {
   };
 };
 
-export const AddItemToCart = (item) => {
+export const AddItemToCart = (product) => {
   return {
     type: ADD,
-    item: item,
+    payload: product,
   };
 };
 
-export const RemoveItemFromCart = (item) => {
+export const RemoveItemFromCart = (product) => {
   return {
     type: REMOVE,
-    item: item,
+    payload: product,
   };
 };
-export const removeItemData = (itemId) => {
+export const removeItemData = (product) => {
   return {
     type: REMOVE_ITEM_DATA,
-    itemId: itemId,
+    payload: product,
   };
 };
 
 export const ResizeItemFromCart = (
-  item,
+  product,
   newSize,
   attributeName,
-  oldKey,
-  newKey
+  oldSelectedAttributes
 ) => {
   return {
     type: RESIZE,
-    item: item,
-    newSize: newSize,
-    attributeName: attributeName,
-    oldKey: oldKey,
-    newKey: newKey,
+    payload: {product, newSize, attributeName, oldSelectedAttributes},
   };
 };
 
