@@ -65,12 +65,6 @@ class Cart extends Component {
     return (
       <>
         <div className={styles.total_box}>
-          <div className={styles.total_title}>Tax: </div>
-          <div className={styles.total_amount}>
-            {this.props.currency.activeCurrency.symbol} 15.00
-          </div>
-        </div>
-        <div className={styles.total_box}>
           <div className={styles.total_title}>Qty: </div>
           <div className={styles.total_amount}>
             {this.props?.cart?.productsCount}
