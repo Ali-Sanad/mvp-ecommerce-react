@@ -47,7 +47,17 @@ class Product extends Component {
       return '';
     }
     let clonedProduct = {...this.props.product};
-    clonedProduct.selectedAttributes = {};
+    if (this.props.product.attributes.length) {
+      //  add items to the cart from PLP with a default choice of the attribute.
+      clonedProduct.selectedAttributes = {};
+      this.props.product.attributes.forEach((attribute) => {
+        let attributeName = attribute?.name;
+        let attributeValue = attribute?.items[0]?.value;
+        clonedProduct.selectedAttributes[attributeName] = attributeValue;
+      });
+    } else {
+      clonedProduct.selectedAttributes = {};
+    }
     this.props.addItemToCart(clonedProduct);
   }
 
@@ -69,11 +79,7 @@ class Product extends Component {
     return (
       <div id='product' className={styles.product_card}>
         <img
-          onClick={
-            this.props.product.inStock && !this.props.product.attributes.length
-              ? this.addItem
-              : () => {}
-          }
+          onClick={this.props.product.inStock ? this.addItem : () => {}}
           style={{
             opacity: this.props.product.inStock ? '1' : '0',
             cursor: 'pointer',
