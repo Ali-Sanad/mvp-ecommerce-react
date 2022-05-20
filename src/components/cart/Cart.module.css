@@ -28,15 +28,17 @@
   justify-content: space-between;
 }
 
-.product_brand,
-.product_name {
+.product_brand {
   color: #1d1f22;
   font-weight: 600;
   font-size: 30px;
   line-height: 27px;
   margin-bottom: 16px;
 }
-
+.product_name {
+  font-size: 30px;
+  line-height: 27px;
+}
 .horizontal_line {
   border-top: #e5e5e5;
   height: 1px;
@@ -118,6 +120,7 @@
 .size_button:hover {
   background: #1d1f22;
   color: white;
+  cursor: pointer;
 }
 
 .size_title {
@@ -138,6 +141,7 @@
   border: none;
   padding: 0;
   margin: 2px auto;
+  cursor: pointer;
 }
 
 .color_button_Wrapper {
@@ -148,6 +152,7 @@
   width: 36px;
   margin-right: 5px;
   border: 1px solid white;
+  cursor: pointer;
 }
 
 .color_button_Wrapper:hover {
@@ -248,6 +253,10 @@
 .totalProductsPriceAndQuantity {
   margin-bottom: 80px;
   padding: 10px;
+}
+.noItemsInCart {
+  margin-top: 50px;
+  text-align: center;
 }
 
 @media only screen and (max-width: 640px) {

@@ -65,6 +65,13 @@ class Cart extends Component {
     return (
       <>
         <div className={styles.total_box}>
+          <div className={styles.total_title}>Tax 21%: </div>
+          <div className={styles.total_amount}>
+            {this.props.currency.activeCurrency.symbol}
+            {(this.getTotal() * 0.21).toFixed(2)}
+          </div>
+        </div>
+        <div className={styles.total_box}>
           <div className={styles.total_title}>Qty: </div>
           <div className={styles.total_amount}>
             {this.props?.cart?.productsCount}
@@ -239,7 +246,6 @@ class Cart extends Component {
                         ? styles.active_button_size
                         : ''
                     }`}
-                    style={{cursor: 'pointer'}}
                   >
                     {size.value}
                   </button>
@@ -261,7 +267,6 @@ class Cart extends Component {
                     : ''
                 }`}
                 key={size.id}
-                style={{cursor: 'pointer'}}
               >
                 <button
                   disabled={
@@ -277,7 +282,7 @@ class Cart extends Component {
                     )
                   }
                   key={size.id}
-                  style={{backgroundColor: size.value, cursor: 'pointer'}}
+                  style={{backgroundColor: size.value}}
                   className={`${styles.color_button} 
                 `}
                 />
@@ -389,7 +394,7 @@ class Cart extends Component {
             </div>
           </>
         ) : (
-          <h4 style={{marginTop: '50px', textAlign: 'center'}}>
+          <h4 className={styles.noItemsInCart}>
             No Items Available in the Cart
           </h4>
         )}

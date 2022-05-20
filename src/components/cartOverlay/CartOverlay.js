@@ -132,14 +132,14 @@ class CartOverlay extends Component {
                       product?.selectedAttributes[attribute?.name] ===
                       size?.value
                     }
-                    onClick={() =>
-                      this.resizeAttributeHandler(
-                        product,
-                        size,
-                        attribute?.name,
-                        product?.selectedAttributes
-                      )
-                    }
+                    // onClick={() =>
+                    //   this.resizeAttributeHandler(
+                    //     product,
+                    //     size,
+                    //     attribute?.name,
+                    //     product?.selectedAttributes
+                    //   )
+                    // }
                     key={size.id}
                     className={`${styles.size_button}  ${
                       product?.selectedAttributes[attribute?.name] ===
@@ -151,12 +151,12 @@ class CartOverlay extends Component {
                         ? styles.capacity_size_button
                         : ' '
                     }
-                    
+                     ${
+                       size.value.length > 2
+                         ? styles.width46px
+                         : styles.width24px
+                     }
                     `}
-                    style={{
-                      width: size.value.length > 2 ? '46px' : '24px',
-                      cursor: 'pointer',
-                    }}
                   >
                     {size.value}
                   </button>
@@ -177,7 +177,6 @@ class CartOverlay extends Component {
                     ? styles.active_color
                     : ''
                 }`}
-                style={{cursor: 'pointer'}}
                 key={size.id}
               >
                 <button
@@ -185,16 +184,16 @@ class CartOverlay extends Component {
                     product?.selectedAttributes[colorAttribute[0]?.name] ===
                     size?.value
                   }
-                  onClick={() =>
-                    this.resizeAttributeHandler(
-                      product,
-                      size,
-                      colorAttribute[0]?.name,
-                      product?.selectedAttributes
-                    )
-                  }
+                  // onClick={() =>
+                  //   this.resizeAttributeHandler(
+                  //     product,
+                  //     size,
+                  //     colorAttribute[0]?.name,
+                  //     product?.selectedAttributes
+                  //   )
+                  // }
                   key={size.id}
-                  style={{backgroundColor: size.value, cursor: 'pointer'}}
+                  style={{backgroundColor: size.value}}
                   className={`${styles.color_button} 
                 `}
                 />
@@ -257,7 +256,7 @@ class CartOverlay extends Component {
           className={styles.checkout}
           onClick={this.props.cartSwitcherAction}
         >
-          CHECKOUT
+          CHECK OUT
         </button>
       </div>
     );
@@ -290,7 +289,7 @@ class CartOverlay extends Component {
     return (
       <ul className={styles.cart_items_list}>
         <li className={styles.cart_items_list_title}>
-          <span style={{fontWeight: 'bold'}}>My Bag,</span>{' '}
+          <span className={styles.myBageText}>My Bag,</span>{' '}
           {this.props.cart.productsCount} items
         </li>
         {this.props.cart.products?.map((product, idx) => {

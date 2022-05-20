@@ -1,61 +1,68 @@
-.currencySelector{
-    align-items: center;
-    display: flex;
-    justify-content: center;
+.currencySelector {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: relative;
 }
 
 .currencySelectorActive {
-    -webkit-transform: scaleY(-1);
-    transform: scaleY(-1);
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+}
+.currencyContextMenuContainer {
+  position: relative;
 }
 
-.currencyContextMenu{
-    background: #FFFFFF;
-    box-shadow: 0 1px 2px 2px #00000033;
-    list-style: none;
-    min-height: 169px;
-    padding-bottom: 10px;
-    position: absolute;
-    top: 70px;
-    width: 114px;
-    z-index: 10;
+.currencyContextMenu {
+  background: #ffffff;
+  box-shadow: 0 1px 2px 2px #00000033;
+  list-style: none;
+  min-height: 169px;
+  padding-bottom: 10px;
+  position: absolute;
+  top: 35px;
+  right: -40px;
+  width: 114px;
+  z-index: 10;
 }
 
 .currencyContextMenu li {
-    display: block;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 160%;
-    margin-top: 21px;
-    text-align: left;
+  display: block;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 160%;
+  margin-top: 21px;
+  text-align: left;
+}
+.currencyContextMenu li:hover {
+  background: #f5f5f5;
+  cursor: pointer;
 }
 
-.currencyContextMenu span{
-    color: black;
-    font-size: 16px;
-    margin-left: 32px;
-    position: relative;
-    text-decoration: none;
+.currencyContextMenu span {
+  color: black;
+  font-size: 16px;
+  margin-left: 32px;
+  position: relative;
+  text-decoration: none;
 }
 
-.currencyContextMenu span:hover{
-    color: green;
-    cursor: pointer;
+.currencyContextMenu span:after {
+  bottom: 0;
+  content: '';
+  left: 50%;
+  position: absolute;
+  transition: all 0.3s;
+  width: 0;
 }
 
-.currencyContextMenu span:after{
-    bottom: 0;
-    content: '';
-    left: 50%;
-    position: absolute;
-    transition: all .3s;
-    width: 0;
+.navbar_CurrencySign {
+  color: #1d1f22;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 160%;
+  margin: 0 10px;
 }
-
-.navbar_CurrencySign{
-    color: #1D1F22;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 160%;
-    margin: 0 10px;
+.arrow {
+  cursor: pointer;
 }

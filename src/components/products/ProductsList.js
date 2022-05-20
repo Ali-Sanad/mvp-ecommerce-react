@@ -74,14 +74,16 @@ class ProductsList extends Component {
   render() {
     return (
       <div className={styles.products_container}>
-        <h3 className={styles.category_name}>
-          {this.props.location.pathname === '/' && 'All'}
-          {this.props.params && this.props?.params.category}
-        </h3>
         {this.state.isLoading ? (
           <Spinner />
         ) : (
-          <div className={styles.row}>{this.renderAllProducts()}</div>
+          <>
+            <h3 className={styles.category_name}>
+              {this.props.location.pathname === '/' && 'All'}
+              {this.props.params && this.props?.params.category}
+            </h3>
+            <div className={styles.row}>{this.renderAllProducts()}</div>
+          </>
         )}
       </div>
     );

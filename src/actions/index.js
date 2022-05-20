@@ -82,6 +82,7 @@ export const getProductsListAction = () => async (dispatch) => {
               gallery
               description
               category
+              brand
               attributes {
                 id
                 name

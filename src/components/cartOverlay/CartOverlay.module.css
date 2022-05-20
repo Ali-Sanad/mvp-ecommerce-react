@@ -152,7 +152,20 @@
   font-size: 16px;
   line-height: 160%;
 }
-.checkout_view_bag_button button {
+
+.checkout {
+  background-color: #5ece7b;
+  border: 1px solid #5ece7b;
+  color: white;
+  box-sizing: border-box;
+  height: 43px;
+  position: static;
+  width: 140px;
+}
+.checkout:hover {
+  cursor: pointer;
+}
+.viewBag {
   background: #ffffff;
   border: 1px solid #1d1f22;
   box-sizing: border-box;
@@ -160,14 +173,6 @@
   position: static;
   width: 140px;
 }
-
-.checkout:hover {
-  background-color: #5ece7b;
-  border: 1px solid #5ece7b;
-  color: white;
-  cursor: pointer;
-}
-
 .viewBag:hover {
   background-color: #000;
   color: white;
@@ -266,6 +271,7 @@
   border: none;
   padding: 0;
   margin: 1px auto;
+  cursor: pointer;
 }
 
 .color_button_Wrapper {
@@ -277,6 +283,7 @@
   margin-right: 5px;
   border: 1px solid white;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .color_button_Wrapper:hover {
@@ -319,10 +326,21 @@
   width: 24px;
   margin-right: 5px;
   transition: all 0.3s;
+  cursor: pointer;
 }
 .size_button:hover {
   background: #1d1f22;
   color: white;
+}
+
+.myBageText {
+  font-weight: bold;
+}
+.width46px {
+  width: 46px;
+}
+.width24px {
+  width: 24px;
 }
 
 @media only screen and (min-width: 1200px) {

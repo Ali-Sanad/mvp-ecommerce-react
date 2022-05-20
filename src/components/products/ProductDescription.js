@@ -105,7 +105,6 @@ class ProductDescription extends Component {
                         ? styles.active_button_size
                         : ''
                     }`}
-                    style={{cursor: 'pointer'}}
                   >
                     {size.value}
                   </button>
@@ -126,7 +125,6 @@ class ProductDescription extends Component {
                     ? styles.active_color
                     : ''
                 }`}
-                style={{cursor: 'pointer'}}
                 key={size.id}
               >
                 <button
@@ -137,7 +135,7 @@ class ProductDescription extends Component {
                     )
                   }
                   key={size.id}
-                  style={{backgroundColor: size.value, cursor: 'pointer'}}
+                  style={{backgroundColor: size.value}}
                   className={`${styles.color_button} 
                 `}
                 />
@@ -212,7 +210,6 @@ class ProductDescription extends Component {
                 className={styles.img_slider}
                 src={image}
                 alt='Product Thumbnail'
-                style={{cursor: 'pointer'}}
               />
             ))}
           </div>
@@ -225,7 +222,6 @@ class ProductDescription extends Component {
                   className={styles.main_img}
                   src={this.state.selectedImage}
                   alt='Active product'
-                  style={{cursor: 'pointer'}}
                 />
               </div>
             ) : (
@@ -234,7 +230,6 @@ class ProductDescription extends Component {
                 className={styles.main_img}
                 src={this.state.selectedImage}
                 alt='Active product'
-                style={{cursor: 'pointer'}}
               />
             )}
           </div>

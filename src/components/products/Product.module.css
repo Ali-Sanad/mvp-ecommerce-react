@@ -42,12 +42,14 @@
   margin: 5px;
   width: 80px;
   object-fit: contain;
+  cursor: pointer;
 }
 
 .main_img {
   height: 511px;
   width: 610px;
   object-fit: contain;
+  cursor: pointer;
 }
 
 .col_1 {
@@ -116,6 +118,7 @@
   width: 63px;
   margin: 5px;
   transition: all 0.3s;
+  cursor: pointer;
 }
 
 .color_button {
@@ -125,6 +128,7 @@
   border: none;
   padding: 0;
   margin: 2px auto;
+  cursor: pointer;
 }
 
 .color_button_Wrapper {
@@ -135,6 +139,7 @@
   width: 36px;
   margin: 5px;
   border: 1px solid white;
+  cursor: pointer;
 }
 
 .color_button_Wrapper:hover {
@@ -158,6 +163,7 @@
   position: absolute;
   right: 5%;
   z-index: 99;
+  cursor: pointer;
 }
 
 .product_card {
@@ -283,7 +289,9 @@
   background: #1d1f22;
   color: white;
 }
-
+.hide_cart_icon {
+  opacity: 0;
+}
 @media only screen and (max-width: 1200px) {
   .products_container .col_3 {
     width: auto;

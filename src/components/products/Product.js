@@ -69,7 +69,10 @@ class Product extends Component {
           src={this.props.product.gallery[0]}
           alt=''
         />
-        <p className={styles.product_card_title}>{this.props.product.name}</p>
+
+        <p className={styles.product_card_title}>
+          {this.props.product.brand} {this.props.product.name}
+        </p>
         <span className={styles.product_card_price}>{this.renderPrice()}</span>
       </React.Fragment>
     );
@@ -80,11 +83,9 @@ class Product extends Component {
       <div id='product' className={styles.product_card}>
         <img
           onClick={this.props.product.inStock ? this.addItem : () => {}}
-          style={{
-            opacity: this.props.product.inStock ? '1' : '0',
-            cursor: 'pointer',
-          }}
-          className={styles.product_cart_icon}
+          className={`${styles.product_cart_icon} ${
+            this.props.product.inStock ? ' ' : styles.hide_cart_icon
+          }`}
           src={'/img/cart.png'}
           alt=''
         />

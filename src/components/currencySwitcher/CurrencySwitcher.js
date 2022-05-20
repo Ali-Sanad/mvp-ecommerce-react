@@ -29,7 +29,6 @@ class CurrencySwitcher extends React.Component {
       active: false,
     };
     this.renderCurrencyContextMenu = this.renderCurrencyContextMenu.bind(this);
-    // this.getCurrencies = this.getCurrencies.bind(this);
     this.renderArrow = this.renderArrow.bind(this);
     this.showContextMenu = this.showContextMenu.bind(this);
     this.changeCurrency = this.changeCurrency.bind(this);
@@ -59,7 +58,7 @@ class CurrencySwitcher extends React.Component {
       return null;
     }
     return (
-      <div>
+      <div className={styles.currencyContextMenuContainer}>
         <ul className={styles.currencyContextMenu}>
           {this.props.currency?.currencies.map((cur) => (
             <li
@@ -81,10 +80,12 @@ class CurrencySwitcher extends React.Component {
   renderArrow() {
     if (this.state.active && this.props.currencySwitcherState) {
       return (
-        <img src={'/img/arrowUP.png'} alt='' style={{cursor: 'pointer'}} />
+        <img src={'/img/arrowUP.png'} className={styles.arrow} alt='arrowUp' />
       );
     }
-    return <img src={'/img/arrow.png'} alt='' style={{cursor: 'pointer'}} />;
+    return (
+      <img src={'/img/arrow.png'} className={styles.arrow} alt='arrowDown' />
+    );
   }
 
   renderSelector() {
