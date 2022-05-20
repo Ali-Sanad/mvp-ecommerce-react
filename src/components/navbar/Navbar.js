@@ -31,13 +31,26 @@ const mapDispatchToProps = (dispatch) => {
 class Navbar extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {isLoading: false};
+
     this.renderNavigationLinks = this.renderNavigationLinks.bind(this);
     this.renderNavbar = this.renderNavbar.bind(this);
     this.renderNavbarCenterIcon = this.renderNavbarCenterIcon.bind(this);
+    this.getCategoriesHandler = this.getCategoriesHandler.bind(this);
+  }
+
+  async getCategoriesHandler() {
+    try {
+      this.setState({isLoading: true});
+      await this.props.getCategoriesAction();
+      this.setState({isLoading: false});
+    } catch (error) {
+      this.setState({isLoading: false});
+    }
   }
 
   componentDidMount() {
-    this.props.getCategoriesAction();
+    this.getCategoriesHandler();
   }
 
   renderNavigationLinks() {
@@ -80,7 +93,9 @@ class Navbar extends React.Component {
   }
 
   render() {
-    return <div className={styles.navbar_container}>{this.renderNavbar()}</div>;
+    return !this.state.isLoading ? (
+      <div className={styles.navbar_container}>{this.renderNavbar()}</div>
+    ) : null;
   }
 }
 

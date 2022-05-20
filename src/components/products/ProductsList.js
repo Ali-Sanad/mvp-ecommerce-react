@@ -27,9 +27,10 @@ class ProductsList extends Component {
     this.state = {filteredProducts: [], isLoading: false};
     this.renderAllProducts = this.renderAllProducts.bind(this);
     this.setCurrencySwitcherState = this.setCurrencySwitcherState.bind(this);
+    this.getProductsListHandler = this.getProductsListHandler.bind(this);
   }
 
-  async componentDidMount() {
+  async getProductsListHandler() {
     try {
       this.setState({isLoading: true});
       await this.props.getProductsListAction();
@@ -37,6 +38,10 @@ class ProductsList extends Component {
     } catch (error) {
       this.setState({isLoading: true});
     }
+  }
+
+  componentDidMount() {
+    this.getProductsListHandler();
   }
 
   renderAllProducts() {
